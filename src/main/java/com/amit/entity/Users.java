@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,8 +18,10 @@ public class Users {
 	private Long uId;
 	private String name;
 	private String password;
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Songs> songs;
+	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+	private List<PlayList> playLists;
 	public Users(Long uId, String name, String password) {
 		super();
 		this.uId = uId;
@@ -69,5 +70,14 @@ public class Users {
 	public void setSongs(List<Songs> songs) {
 		this.songs = songs;
 	}
+
+	public List<PlayList> getPlayLists() {
+		return playLists;
+	}
+
+	public void setPlayLists(List<PlayList> playLists) {
+		this.playLists = playLists;
+	}
+	
 	
 }

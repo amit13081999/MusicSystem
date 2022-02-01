@@ -1,23 +1,29 @@
 package com.amit.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Songs {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long sId;
+	private Long sId;
 	@Column()
-	String sName;
-	String album;
+	private String sName;
+	private String album;
 	@ManyToOne
 	private Users user;
-
+	@OneToMany(mappedBy = "song",cascade = CascadeType.ALL)
+	private List<PlayListSongs> playListSongs;
+	
 	public Songs() {
 		super();
 		// TODO Auto-generated constructor stub

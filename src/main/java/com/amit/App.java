@@ -1,8 +1,6 @@
 package com.amit;
 
 import java.util.Scanner;
-import java.util.logging.Level;
-
 import com.amit.service.UserService;
 
 public class App {

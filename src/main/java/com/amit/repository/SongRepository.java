@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import com.amit.entity.PlayList;
 import com.amit.entity.Songs;
 import com.amit.entity.Users;
 
@@ -32,7 +33,7 @@ public class SongRepository {
 		session.close();
 	}
 
-	public  void allSongs(Long uId) {
+	public void allSongs(Long uId) {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Users user = (Users) session.get(Users.class, uId);
@@ -45,10 +46,21 @@ public class SongRepository {
 
 	}
 
-	public  void deleteSong(Users u, String sName) {
+	public void deleteSong(Users u, String sName) {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Transaction tx = session.beginTransaction();
+
+		String query1 = "from Songs as s where s.user=:user and s.sName=:sName";
+		Query<Songs> p = (Query<Songs>) session.createQuery(query1);
+		p.setParameter("user", u);
+		p.setParameter("sName", sName);
+		Songs pp = (Songs) p.uniqueResult();
+		String query123 = "delete from PlayListSongs as p where p.song=:song";
+		Query<PlayList> qq = (Query<PlayList>) session.createQuery(query123);
+		qq.setParameter("song", pp);
+		qq.executeUpdate();
+
 		String query = "delete from Songs as s where s.user=:user and s.sName=:sName";
 		Query<Songs> q = (Query<Songs>) session.createQuery(query);
 		q.setParameter("sName", sName);
@@ -64,11 +76,11 @@ public class SongRepository {
 		}
 	}
 
-	public  void updateSong(Users u, String songToBeUpdated, String newName, String newAlbum) {
+	public void updateSong(Users u, String songToBeUpdated, String newName, String newAlbum) {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Transaction tx = session.beginTransaction();
-		String query = "update Songs  set sName=:newName,album=:newAlbum  where user=:user and sName=:sName";    
+		String query = "update Songs  set sName=:newName,album=:newAlbum  where user=:user and sName=:sName";
 		Query<Songs> q = (Query<Songs>) session.createQuery(query);
 		q.setParameter("sName", songToBeUpdated);
 		q.setParameter("user", u);

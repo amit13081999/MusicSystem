@@ -10,12 +10,13 @@ import com.amit.entity.Users;
 import com.amit.repository.SongRepository;
 
 public class SongService {
-	
+	PlayListService playListService = new PlayListService();
 	SongRepository songRepository = new SongRepository();
 	public  void home(Long uId) {
 		SessionFactory factory = new Configuration().configure().buildSessionFactory();
 		Session session = factory.openSession();
 		Users u = (Users) session.get(Users.class, uId);
+		session.close();
 		String n = u.getName();
 		System.out.println("logged in successfully");
 		System.out.println("Hi, " + n);
@@ -26,11 +27,7 @@ public class SongService {
 			System.out.println("2 -> Add Song");
 			System.out.println("3 -> Update Song");
 			System.out.println("4 -> Delete Song");
-			System.out.println("5 -> Create Playlist");
-			System.out.println("6 -> Update Playlist");
-			System.out.println("7 -> Delete Playlist");
-			System.out.println("7 -> Delete Playlist");
-			System.out.println("7 -> Delete Playlist");
+			System.out.println("5 -> Playlist");
 			System.out.println("10 -> Log Out");
 			ch = sc.nextInt();
 			switch (ch) {
@@ -57,6 +54,9 @@ public class SongService {
 				System.out.println("Enter song to be deleted :");
 				String sName1 = sc.next();
 				songRepository.deleteSong(u, sName1);
+				break;
+			case 5:
+				playListService.home(uId);
 				break;
 			case 10:
 				System.out.println("logging out...");
