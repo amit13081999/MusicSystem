@@ -4,54 +4,55 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
 public class PlayList {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long pId;
-	private String pName;
-	@ManyToOne
-	Users user;
-	@OneToMany(mappedBy = "playList",cascade = CascadeType.ALL)
-	private List<PlayListSongs> playListSongs;
-	
-	public PlayList() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public PlayList(Long pId, String pName, Users user) {
-		super();
-		this.pId = pId;
-		this.pName = pName;
+	public PlayList(String name, Users user) {
+		this.name = name;
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return "PlayList [pId=" + pId + ", pName=" + pName + "]";
+	@Id
+	private Long id;
+
+	private String name;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private Users user;
+
+	@OneToMany(mappedBy = "playList", cascade = CascadeType.ALL)
+	private List<PlayListSongs> playListSongs;
+
+	public PlayList() {
+
+		// TODO Auto-generated constructor stub
 	}
 
-	public Long getpId() {
-		return pId;
+	public PlayList(String name, Users user, List<PlayListSongs> playListSongs) {
+		this.name = name;
+		this.user = user;
+		this.playListSongs = playListSongs;
 	}
 
-	public void setpId(Long pId) {
-		this.pId = pId;
+	public Long getId() {
+		return id;
 	}
 
-	public String getpName() {
-		return pName;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public void setpName(String pName) {
-		this.pName = pName;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Users getUser() {
@@ -61,6 +62,13 @@ public class PlayList {
 	public void setUser(Users user) {
 		this.user = user;
 	}
-	
-	
+
+	public List<PlayListSongs> getPlayListSongs() {
+		return playListSongs;
+	}
+
+	public void setPlayListSongs(List<PlayListSongs> playListSongs) {
+		this.playListSongs = playListSongs;
+	}
+
 }

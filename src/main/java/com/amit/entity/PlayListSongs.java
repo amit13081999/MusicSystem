@@ -1,20 +1,25 @@
 package com.amit.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.amit.entity.idClass.PlayListSongsId;
+
 @Entity
+@IdClass(PlayListSongsId.class)
 public class PlayListSongs {
 	@Id
-	@GeneratedValue(strategy =GenerationType.IDENTITY )
-	private Long id;
 	@ManyToOne
-	Songs song;
+	@JoinColumn(name = "song_id")
+	private Songs song;
+	
+	@Id
 	@ManyToOne
-	PlayList playList;
+	@JoinColumn(name = "playlist_id")
+	private PlayList playList;
 	
 	public PlayListSongs() {
 		super();
@@ -22,17 +27,8 @@ public class PlayListSongs {
 	}
 
 	public PlayListSongs(Songs song, PlayList playList) {
-		super();
 		this.song = song;
 		this.playList = playList;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public Songs getSong() {

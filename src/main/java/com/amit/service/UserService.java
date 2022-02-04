@@ -1,59 +1,87 @@
 package com.amit.service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-
 import com.amit.entity.Users;
+import com.amit.utility.RandomUtility;
+import com.amit.utility.SessionUtility;
 
 public class UserService {
 
-	SongService songService = new SongService();
-	public void loginUser(String name, String password) {
-		SessionFactory factory = new Configuration().configure().buildSessionFactory();
-		Session session = factory.openSession();
-		String query = "from Users as u where u.name=:name";
-		Users q = (Users) session.createQuery(query).setParameter("name", name).uniqueResult();
-		if (q != null && q.getPassword().equals(password)) {
-	    	Long uId=q.getuId();
-			session.close();
-			songService.home(uId);
-		} else
-			System.out.println("no user exists");
-		
+	private Scanner sc;
+
+	public UserService() {
+		this.sc = new Scanner(System.in);
 	}
 
-	public void registerUser(String name, String password) {
-		SessionFactory factory = new Configuration().configure().buildSessionFactory();
-		Session session = factory.openSession();
-		Transaction tx = session.beginTransaction();
-		String query = "from Users as u where u.name=:name";
-		Users q = (Users) session.createQuery(query).setParameter("name", name).uniqueResult();
-		if (q != null) {
-			System.out.println("Name already exists, Registration failed");
+	private static final String USER_BY_NAME = "from Users as u where u.name=:name";
+
+	public void loginUser() {
+		System.out.println("Enter your name :");
+		String name = sc.next();
+
+		System.out.println("Enter your password :");
+		String password = sc.next();
+
+		Session session = SessionUtility.getSession();
+
+		Users user = session.createQuery(USER_BY_NAME, Users.class).setParameter("name", name).uniqueResult();
+		session.close();
+
+		if (Objects.isNull(user)) {
+			System.out.println("no user exists");
+		} else if (user.getPassword().equals(password)) {
+			new SongService().home(user);
 		} else {
-			System.out.println("Registration Successful");
-			Users user=new Users();
-			user.setName(name);
-			user.setPassword(password);
+			System.out.println("Incorrect password !!");
+		}
+
+	}
+
+	public void registerUser() {
+		System.out.println("Enter your name :");
+		String name = sc.next();
+
+		Session session = SessionUtility.getSession();
+
+		Users u = session.createQuery(USER_BY_NAME, Users.class).setParameter("name", name).uniqueResult();
+
+		if (!Objects.isNull(u)) {
+			System.out.println("Name already exists, Registration failed");
+
+		} else {
+			System.out.println("Enter your password :");
+			String password = sc.next();
+
+			String uniqueName = RandomUtility.getUniqueName();
+			Users user = new Users(name, uniqueName, password);
+
+			Transaction tx = session.beginTransaction();
 			session.save(user);
 			tx.commit();
-			session.close();
+
+			System.out.println("Registration Successful");
 		}
-		
+		session.close();
+
 	}
 
-	public  void getAllUsers() {
-		SessionFactory factory1 = new Configuration().configure().buildSessionFactory();
-		Session session1 = factory1.openSession();
-		List<Users> l1 = session1.createQuery("from Users", Users.class).list();
-		session1.close();
-		for (Users list : l1) {
-			System.out.println(list);
+	public void getAllUsers() {
+		Session session = SessionUtility.getSession();
+		List<Users> l1 = session.createQuery("from Users", Users.class).list();
+
+		if (l1.isEmpty()) {
+			System.out.println("0 users!!");
+
+		} else {
+			for (Users users : l1)
+				System.out.println(users.getName());
+
 		}
-		
+		session.close();
 	}
 }

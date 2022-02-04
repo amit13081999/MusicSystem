@@ -1,78 +1,57 @@
 package com.amit.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
-import com.amit.repository.PlayListRepository;
-import com.amit.repository.PlayListSongRepository;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
+
+import com.amit.entity.PlayList;
+import com.amit.entity.PlayListSongs;
+import com.amit.entity.Songs;
+import com.amit.entity.Users;
+import com.amit.utility.SessionUtility;
 
 public class PlayListService {
+	private PlayListSongService playListSongService;
+	private Scanner sc;
 
-	PlayListSongRepository playListSongRepository = new PlayListSongRepository();
-	PlayListRepository playListRepository = new PlayListRepository();
+	public PlayListService() {
 
-	public void home(Long uId) {
-		Scanner sc = new Scanner(System.in);
+		this.sc = new Scanner(System.in);
+		this.playListSongService = new PlayListSongService();
+	}
+
+	public static final String GET_ALL_PLAYLIST = "from PlayList as p where p.user=:user";
+	public static final String PLAYLIST_BY_NAME = "from PlayList as p where p.pName=:pName and p.user=:user";
+
+	public void home(Users u) {
 		while (true) {
 			int ch;
 			System.out.println("1 -> all Playlists");
-			System.out.println("2 -> Create Playlist");
-			System.out.println("3 -> Update Meta data of a Playlist");
+			System.out.println("2 -> create Playlists");
+			System.out.println("3 -> Update   Playlist");
 			System.out.println("4 -> Delete Playlist");
 			System.out.println("5 -> View PlayList");
-			System.out.println("6 -> Add Song in PlayList");
-			System.out.println("7 -> Delete song in PlayList");
-			System.out.println("10 -> Back");
+			System.out.println("6 -> Back");
 			ch = sc.nextInt();
 
 			switch (ch) {
 
 			case 1:
-				playListRepository.allPlayLists(uId);
+				allPlayLists(u);
 				break;
 
 			case 2:
-				System.out.println("Enter PlayList name :");
-				String pName = sc.next();
-				playListRepository.createPlayList(pName, uId);
+				createPlayList(u);
 				break;
-
-			case 3:
-				System.out.println("Enter PlayList(Name) needed to be updated :");
-				String playListToBeUpdated = sc.next();
-				System.out.println("Enter new-PlayList(Name) :");
-				String newName = sc.next();
-				playListRepository.updatePlaylist(uId, playListToBeUpdated, newName);
-				break;
-
-			case 4:
-				System.out.println("Enter Playlist to be deleted :");
-				String pName1 = sc.next();
-				playListRepository.deletePlayList(uId, pName1);
-				break;
-
-			case 5:
-				System.out.println("Enter PlayList name :");
-				String pName2 = sc.next();
-				playListSongRepository.viewPlayList(pName2, uId);
-				break;
+	
 
 			case 6:
-				System.out.println("Choose Playlist  :");
-				String pListName = sc.next();
-				System.out.println("Enter Song to be added :");
-				String sName = sc.next();
-				playListSongRepository.addSong(uId, sName, pListName);
-				break;
-				
-			case 7:
-				System.out.println("Enter PlayList name :");
-				String pName3 = sc.next();
-				System.out.println("Enter Song to be deleted :");
-				String sName3 = sc.next();
-				playListSongRepository.deleteFromPlayList(pName3,sName3, uId);
-				break;
-				
-			case 10:
 				return;
 
 			default:
@@ -80,6 +59,67 @@ public class PlayListService {
 			}
 		}
 
+	}
+
+	private void createPlayList(Users u) {
+		System.out.println("Enter PlayList name :");
+		String pName = sc.next();
+
+		Session session = SessionUtility.getSession();
+		Transaction tx = session.beginTransaction();
+
+		Query<PlayList> p = session.createQuery(PLAYLIST_BY_NAME, PlayList.class);
+		p.setParameter("user", u);
+		p.setParameter("pName", pName);
+		PlayList pp = (PlayList) p.uniqueResult();
+		if (pp != null) {
+			System.out.println("PlayList Already exists by this name !!");
+
+		} else {
+			PlayList playList = new PlayList(pName, u);
+			
+			System.out.println("No. of Songs you want to add: ");
+			int n = sc.nextInt();
+			sc.next();
+			List<String> songList = new ArrayList();
+			for (int i = 0; i < n; i++) {
+				songList.add(sc.nextLine());
+			}
+
+			Query<Songs> qqq = session.createQuery(SongService.GET_SONGS_IN_LIST, Songs.class);
+			qqq.setParameter("list", songList);
+			qqq.setParameter("user", u);
+			List<Songs> songs = qqq.list();
+			if (songs.isEmpty())
+				return;
+			List<PlayListSongs> playListSongs = new ArrayList();
+			for (Songs song : songs) {
+				playListSongs.add(new PlayListSongs(song,playList));
+			}
+			playList.setPlayListSongs(playListSongs);
+
+			session.save(playList);
+			tx.commit();
+			session.close();
+		}
+
+	}
+
+	private void allPlayLists(Users u) {
+		Session session = SessionUtility.getSession();
+
+		List<PlayList> q = session.createQuery(GET_ALL_PLAYLIST, PlayList.class).setParameter("user", u).list();
+
+		if (q.isEmpty()) {
+			System.out.println("Zero PlayLists !! Go to create PlayList to create new playlist....");
+
+		} else {
+
+			for (PlayList p : q) {
+				System.out.println(p.getName());
+			}
+		}
+		session.close();
 	}
 
 }

@@ -14,37 +14,57 @@ import javax.persistence.OneToMany;
 public class Users {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "uid")
-	private Long uId;
+	private Long id;
+
+	@Column(unique = true)
 	private String name;
+
+	@Column(name = "unique_name",unique = true)
+	private String uniqueName;
+
 	private String password;
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    private List<Songs> songs;
-	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	private List<Songs> songs;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<PlayList> playLists;
-	public Users(Long uId, String name, String password) {
-		super();
-		this.uId = uId;
-		this.name = name;
-		this.password = password;
-	}
 
 	public Users() {
-		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public Users(Long id, String name, String uniqueName, String password, List<Songs> songs,
+			List<PlayList> playLists) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.uniqueName = uniqueName;
+		this.password = password;
+		this.songs = songs;
+		this.playLists = playLists;
+	}
+
+	
+
+	public Users(String name, String uniqueName, String password) {
+		super();
+		this.name = name;
+		this.uniqueName = uniqueName;
+		this.password = password;
 	}
 
 	@Override
 	public String toString() {
-		return "Users [uId=" + uId + ", name=" + name + ", password=" + password + "]";
+		return "[ name = " + name + ", uniqueName = " + uniqueName + ", password = " + password + "]";
 	}
 
-	public Long getuId() {
-		return uId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setuId(Long uId) {
-		this.uId = uId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -53,6 +73,14 @@ public class Users {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getUniqueName() {
+		return uniqueName;
+	}
+
+	public void setUniqueName(String uniqueName) {
+		this.uniqueName = uniqueName;
 	}
 
 	public String getPassword() {
@@ -78,6 +106,5 @@ public class Users {
 	public void setPlayLists(List<PlayList> playLists) {
 		this.playLists = playLists;
 	}
-	
-	
+
 }
