@@ -5,7 +5,9 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import com.amit.entity.PlayList;
+import com.amit.entity.PlayListSongs;
 import com.amit.entity.Songs;
+import com.amit.entity.Users;
 import com.amit.utility.SessionUtility;
 
 public class PlayListSongService {
@@ -15,6 +17,9 @@ public class PlayListSongService {
     }
     
     public static final String DELETE_BY_SONG = "delete from PlayListSongs as p where p.song=:song";
+    public static final String DELETE_BY_PLAYLIST = "delete from PlayListSongs as p where p.playList=:playList";
+    public static final String All_SONGS = "from PlayListSongs where playList=:playList";
+    
     
 	public void home(String pName2, Long uId) {
 //		Scanner sc = new Scanner(System.in);
@@ -65,11 +70,23 @@ public class PlayListSongService {
 		Session session = SessionUtility.getSession();
 		Transaction tx = session.beginTransaction();
 		
-		Query<PlayList> qq =  session.createQuery(DELETE_BY_SONG);
+		Query<PlayListSongs> qq =  session.createQuery(DELETE_BY_SONG);
 		qq.setParameter("song", pp);
 		qq.executeUpdate();
 		tx.commit();
-		session.close();
 		
 	}
+
+	public void deleteByPlayList(PlayList pp) {
+		Session session = SessionUtility.getSession();
+		Transaction tx = session.beginTransaction();
+		
+		Query<PlayListSongs> qq =  session.createQuery(DELETE_BY_PLAYLIST);
+		qq.setParameter("playList", pp);
+		qq.executeUpdate();
+		tx.commit();
+		
+	}
+
+
 }

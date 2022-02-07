@@ -1,6 +1,7 @@
 package com.amit.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 import org.hibernate.Session;
@@ -27,7 +28,8 @@ public class SongService {
 	private static final String SONG_BY_NAME = "from Songs as s where s.name=:sName and s.user=:user";
 	private static final String DELETE_BY_SONG_NAME = "delete from Songs as s where s.user=:user and s.name=:sName";
 	public static final String GET_SONGS_IN_LIST = "from Songs as s where s.name in (:list) and s.user=:user";
-
+	public static final String GET_SONGS_IN_LIST_BY_UNIQUE_NAME = "from Songs as s where s.uniqueName in (:list) and s.user=:user";
+	
 	public void home(Users u) {
 		System.out.println("");
 		System.out.println("logged in successfully");
@@ -86,7 +88,7 @@ public class SongService {
 		p.setParameter("sName", sName);
 		Songs pp = p.uniqueResult();
 
-		if (pp == null) {
+		if (Objects.isNull(pp)) {
 			System.out.println("No such song exists!!");
 
 		} else {

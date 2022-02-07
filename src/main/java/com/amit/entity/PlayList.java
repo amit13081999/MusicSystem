@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,12 +13,8 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class PlayList {
-	public PlayList(String name, Users user) {
-		this.name = name;
-		this.user = user;
-	}
-
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String name;
@@ -31,6 +29,11 @@ public class PlayList {
 	public PlayList() {
 
 		// TODO Auto-generated constructor stub
+	}
+
+	public PlayList(String name, Users user) {
+		this.name = name;
+		this.user = user;
 	}
 
 	public PlayList(String name, Users user, List<PlayListSongs> playListSongs) {
