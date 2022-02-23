@@ -21,51 +21,6 @@ public class PlayListSongService {
     public static final String All_SONGS = "from PlayListSongs where playList=:playList";
     public static final String DELETE_BY_SONG_PLAYLIST  ="delete from PlayListSongs where song in (:list) and playList=:playList";
     
-	public void home(String pName2, Long uId) {
-//		Scanner sc = new Scanner(System.in);
-//		while (true) {
-//			int count = playListSongRepository.viewPlayList(pName2, uId);
-//			if (count == 0) {
-//				return;
-//			}
-//			int ch;
-//			System.out.println("1 -> update playlist name");
-//			System.out.println("2 -> Add Song in PlayList");
-//			System.out.println("3 -> Delete song in PlayList");
-//			System.out.println();
-//			ch = sc.nextInt();
-//
-//			switch (ch) {
-//			case 1:
-//				System.out.println("Enter Song to be added :");
-//				String sName = sc.next();
-//				playListSongRepository.addSong(uId, sName, pName2);
-//				break;
-//
-//			case 2:
-//				System.out.println("Enter Song to be deleted :");
-//				String sName3 = sc.next();
-//				int c = playListSongRepository.deleteFromPlayList(pName2, sName3, uId);
-//				if (c == 0) {
-//					System.out.println("Song already not in  PlayList !!");
-//				} else if (c == 1) {
-//					System.out.println("Song deleted from PlayList !!");
-//				} else {
-//					System.out.println("Provide correct playlist name and Song name");
-//				}
-//				break;
-//
-//			case 3:
-//				return;
-//
-//			default:
-//				System.out.println("Invalid choice...");
-//				break;
-//			}
-//
-//		}
-	}
-
 	public void deleteBySong(Songs pp) {
 		Session session = SessionUtility.getSession();
 		Transaction tx = session.beginTransaction();
