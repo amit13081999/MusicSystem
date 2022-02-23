@@ -1,58 +1,74 @@
 package com.amit.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Songs {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long sId;
-	@Column()
-	String sName;
-	String album;
+	private Long id;
+
+	private String name;
+   
+	@Column(name = "unique_name",unique = true)
+	private String uniqueName;
+
 	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private Users user;
 
+	@OneToMany(mappedBy = "song", cascade = CascadeType.ALL)
+	private List<PlayListSongs> playListSongs;
+
 	public Songs() {
-		super();
+
 		// TODO Auto-generated constructor stub
 	}
 
-	public Songs(Long sId, String sName, String album, Users user) {
+	public Songs( String name, String uniqueName, Users user) {
 		super();
-		this.sId = sId;
-		this.sName = sName;
-		this.album = album;
+		this.name = name;
+		this.uniqueName = uniqueName;
 		this.user = user;
 	}
 
-	public Long getsId() {
-		return sId;
+	@Override
+	public String toString() {
+		return " name = " + name + ", uniqueName = " + uniqueName ;
 	}
 
-	public void setsId(Long sId) {
-		this.sId = sId;
+	public Long getId() {
+		return id;
 	}
 
-	public String getsName() {
-		return sName;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public void setsName(String sName) {
-		this.sName = sName;
+	public String getName() {
+		return name;
 	}
 
-	public String getAlbum() {
-		return album;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setAlbum(String album) {
-		this.album = album;
+	public String getUniqueName() {
+		return uniqueName;
+	}
+
+	public void setUniqueName(String uniqueName) {
+		this.uniqueName = uniqueName;
 	}
 
 	public Users getUser() {
@@ -63,10 +79,12 @@ public class Songs {
 		this.user = user;
 	}
 
-	@Override
-	public String toString() {
-		return "Songs [sId=" + sId + ", sName=" + sName + ", album=" + album + "]";
+	public List<PlayListSongs> getPlayListSongs() {
+		return playListSongs;
 	}
-	
-	
+
+	public void setPlayListSongs(List<PlayListSongs> playListSongs) {
+		this.playListSongs = playListSongs;
+	}
+
 }

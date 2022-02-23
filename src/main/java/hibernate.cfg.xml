@@ -12,6 +12,7 @@
 		<property name="show_sql">false</property>
 		<mapping class="com.amit.entity.Users" />
 		<mapping class="com.amit.entity.Songs" />
-		<mapping class="com.amit.entity.PlayList" />		
+		<mapping class="com.amit.entity.PlayList" />	
+		<mapping class="com.amit.entity.PlayListSongs" />	
 	</session-factory>
 </hibernate-configuration>
