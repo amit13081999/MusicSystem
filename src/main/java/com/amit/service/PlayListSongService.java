@@ -19,7 +19,7 @@ public class PlayListSongService {
     public static final String DELETE_BY_SONG = "delete from PlayListSongs as p where p.song=:song";
     public static final String DELETE_BY_PLAYLIST = "delete from PlayListSongs as p where p.playList=:playList";
     public static final String All_SONGS = "from PlayListSongs where playList=:playList";
-    
+    public static final String DELETE_BY_SONG_PLAYLIST  ="delete from PlayListSongs where song in (:list) and playList=:playList";
     
 	public void home(String pName2, Long uId) {
 //		Scanner sc = new Scanner(System.in);

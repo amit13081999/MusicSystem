@@ -88,9 +88,9 @@ public class PlayListService {
 			System.out.println("No Such PlayList Exists!!");
 		} else {
 			System.out.println("Change Name :");
-			String newName = sc.nextLine();
+			String newName = sc.next();
 
-			if (Objects.nonNull(newName) && !newName.equals("")) {
+			if (Objects.nonNull(newName) && !newName.equals("no")) {
 
 				Query<PlayList> qq = session.createQuery(PLAYLIST_BY_NAME, PlayList.class);
 				qq.setParameter("pName", newName);
@@ -122,8 +122,10 @@ public class PlayListService {
 				qqq.setParameter("user", u);
 				List<Songs> songs = qqq.list();
 
-				if (songs.isEmpty())
+				if (songs.isEmpty()) {
+					tx.commit();
 					return;
+				}
 
 				Query<PlayListSongs> xx = session.createQuery(PlayListSongService.All_SONGS, PlayListSongs.class);
 				xx.setParameter("playList", q1);
@@ -161,17 +163,19 @@ public class PlayListService {
 				allSongs.setParameter("list", songUserInput);
 				allSongs.setParameter("user", u);
 				List<Songs> allsongs = allSongs.list();
-				
-				if(allsongs.isEmpty())
+
+				if (allsongs.isEmpty())
 					return;
 
-				Query<PlayListSongs> allSongsInPlayList = session.createQuery(PlayListSongService.All_SONGS,PlayListSongs.class);
+				Query<PlayListSongs> allSongsInPlayList = session.createQuery(PlayListSongService.All_SONGS,
+						PlayListSongs.class);
 				allSongsInPlayList.setParameter("playList", q1);
 				List<PlayListSongs> allSongsList = allSongsInPlayList.list();
 
+				List<Songs> deleteList = new ArrayList();
 				for (PlayListSongs p : allSongsList) {
-					if (!allsongs.contains(p.getSong())) {
-						allsongs.remove(p.getSong());
+					if (allsongs.contains(p.getSong())) {
+						deleteList.add(p.getSong());
 					}
 				}
 
@@ -179,8 +183,8 @@ public class PlayListService {
 					return;
 				}
 
-				Query<PlayListSongs> deleteSongs = session.createQuery("delete from playListSongs where song in (:list) and playList=:playList");
-				deleteSongs.setParameter("list", allsongs);
+				Query<PlayListSongs> deleteSongs = session.createQuery(PlayListSongService.DELETE_BY_SONG_PLAYLIST);
+				deleteSongs.setParameter("list", deleteList);
 				deleteSongs.setParameter("playList", q1);
 				deleteSongs.executeUpdate();
 
